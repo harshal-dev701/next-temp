@@ -1,0 +1,11 @@
+{
+    "navbar": {
+      "menu": {
+        "home": "Hogar",
+        "about": "Sobre nosotros",
+        "blog": "Blog",
+        "contact": "Contacto"
+      }
+    }
+  }
+  
