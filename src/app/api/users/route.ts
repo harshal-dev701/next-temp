@@ -16,8 +16,8 @@ export const GET = async () => {
 export const POST = async (request: Request) => {
   try {
     const body = await request.json();
-    const { userName, email, password } = body;
-    if (!userName || !email || !password) {
+    const { firstName, lastName, email, password } = body;
+    if (!firstName || !lastName || !email || !password) {
       return new NextResponse('Missing required fields', { status: 400 });
     }
     await connect();

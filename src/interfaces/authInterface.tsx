@@ -58,7 +58,7 @@ export interface AuthReducerInterface {
   subscriptionsList: InvoiceDataInterface[];
 }
 export interface AuthUser extends User {
-  accessToken?: string;
+  access_token?: string;
 }
 
 export interface UserDetailsInterface {

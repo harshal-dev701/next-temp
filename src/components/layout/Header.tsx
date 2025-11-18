@@ -6,8 +6,12 @@ import { useTranslation } from '@/hooks/useTranslation';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { ChevronDown } from 'lucide-react';
+import { Button } from '../ui/button';
+import { ACCESS_TOKEN, USER_DETAILS, USER_PREFERENCES } from '@/global/constants';
+import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 
-const getLanguageLabel = (lang) => {
+const getLanguageLabel = (lang: string) => {
   switch (lang) {
     case 'english':
       return 'English';
@@ -19,6 +23,7 @@ const getLanguageLabel = (lang) => {
 };
 
 export default function Header() {
+  const router = useRouter();
   const { language, changeLanguage } = useLanguage();
   const [open, setOpen] = useState(false);
   const t = useTranslation();
@@ -96,6 +101,17 @@ export default function Header() {
   const handleSelect = (item) => {
     changeLanguage(item);
     // setOpen(false); // Close popover after selection
+  };
+
+  const logout = () => {
+    try {
+      localStorage.clear();
+      router.push('/login');
+      toast.success('Logout successful');
+    } catch (error) {
+      console.error('Logout error:', error);
+      toast.error('Logout failed');
+    }
   };
 
   return (
@@ -271,7 +287,7 @@ export default function Header() {
                     onClick={() => {
                       setOpen(false);
                       handleSelect('english');
-                    }} 
+                    }}
                     className={`px-3 py-2 text-left font-size-16 hover:bg-gray-100 transition-colors cursor-pointer ${
                       language === 'english' ? 'bg-gray-50 font-medium' : ''
                     }`}>
@@ -291,6 +307,15 @@ export default function Header() {
               </PopoverContent>
             </Popover>
           </ul>
+
+          <div>
+            <Button
+              variant='outline'
+              className='text-gray hover:text-blue-600 cursor-pointer dark:hover:text-light-blue font-medium transition-colors duration-200 px-3 py-2'
+              onClick={logout}>
+              Logout
+            </Button>
+          </div>
 
           {/* Mobile menu button and theme selector */}
         </div>

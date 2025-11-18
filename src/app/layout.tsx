@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { Providers } from '../components/providers/Providers';
-import Header from '../components/layout/Header';
-import Footer from '../components/layout/Footer';
+import ConditionalLayout from '../components/layout/ConditionalLayout';
+import Toaster from '../components/Toaster/toaster';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -25,13 +25,13 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  
   return (
     <html lang='en' suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased w-full h-full`}>
         <Providers>
-          <Header />
-          <main className='min-h-screen w-full h-full'>{children}</main>
-          <Footer />
+          <ConditionalLayout>{children}</ConditionalLayout>
+          <Toaster />
         </Providers>
       </body>
     </html>
