@@ -8,7 +8,7 @@ const publicRoutes: string[] = [
   '/login',
   '/signup',
   '/404',
-  '/forgetpassword',
+  '/forgotPassword',
   '/email-sent-confirm',
   '/reset-password',
   '/newpassword',

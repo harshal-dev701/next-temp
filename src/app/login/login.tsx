@@ -27,7 +27,7 @@ const LoginPage = () => {
         const response = await login(values.email, values.password);
         if (response.status === 200) {
           router.push('/');
-          toast.success(response.message || 'Login successful');
+          toast.success(response.message || 'Login successfully');
         } else {
           toast.error(response.message || 'Login failed');
         }
@@ -176,7 +176,7 @@ const LoginPage = () => {
               </label>
             </div>
 
-            <div className='text-sm'>
+            <div className='text-sm' onClick={() => router.push("/forgotPassword")}>
               <a href='#' className='font-medium text-blue-600 hover:text-blue-500 transition'>
                 Forgot password?
               </a>

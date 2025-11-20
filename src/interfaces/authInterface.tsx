@@ -28,6 +28,14 @@ export interface ResetPasswordInterface {
   confirmPassword: string;
 }
 
+export interface ForgotPasswordInterface {
+  email: string;
+}
+
+export interface OTPVerificationInterface {
+  otp: string;
+}
+
 export interface InvoiceDataInterface {
   amount: number;
   created_at: string;
