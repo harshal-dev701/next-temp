@@ -1,7 +1,7 @@
 'use client';
 import { useFormik } from 'formik';
 import React, { useCallback, useState, useEffect, useRef } from 'react';
-import { ForgotPasswordInterface, OTPVerificationInterface, ResetPasswordInterface } from '@/interfaces/authInterface';
+import { ForgotPasswordInterface, ResetPasswordInterface } from '@/interfaces/authInterface';
 import * as Yup from 'yup';
 import Link from 'next/link';
 import { IoIosCloseCircle } from 'react-icons/io';

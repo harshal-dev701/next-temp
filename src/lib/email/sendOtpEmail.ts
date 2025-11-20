@@ -29,10 +29,7 @@ export const sendOtpEmail = async ({ email, otp }: SendOtpEmailParams) => {
   try {
     const resend = getResendClient();
     // Use the default Resend domain for testing
-    const fromEmail = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
-
-    console.log('Attempting to send email to:', email);
-    console.log('From email:', fromEmail);
+    const fromEmail = process.env.NEXT_PUBLIC_RESEND_FROM_EMAIL || 'onboarding@resend.dev';
 
     const result = await resend.emails.send({
       from: fromEmail,
@@ -57,7 +54,6 @@ export const sendOtpEmail = async ({ email, otp }: SendOtpEmailParams) => {
       `
     });
 
-    console.log('Resend API response:', JSON.stringify(result, null, 2));
 
     if (result.error) {
       console.error('Resend API error details:', result.error);
@@ -65,7 +61,6 @@ export const sendOtpEmail = async ({ email, otp }: SendOtpEmailParams) => {
       throw new Error(`Failed to send OTP email: ${errorMessage}`);
     }
 
-    console.log('Email sent successfully to:', email, 'ID:', result.data?.id);
     return true;
   } catch (error: any) {
     console.error('Error in sendOtpEmail - Full error:', error);

@@ -25,7 +25,6 @@ const LoginPage = () => {
       try {
         setSubmitting(true);
         const response = await loginService(values.email, values.password);
-        console.log('response', response);
         if (response.status === 200) {
           router.push('/');
           toast.success(response.message || 'Login successfully');
