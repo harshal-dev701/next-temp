@@ -8,7 +8,7 @@ const customAxios = axios.create({
   baseURL: BASE_URL,
 });
 
-const requestHandler = (request) => {
+const requestHandler = (request: any) => {
   const access_token = userPreferences.get(ACCESS_TOKEN);
 
   if (access_token) {
@@ -17,28 +17,62 @@ const requestHandler = (request) => {
   return request;
 };
 
-const responseHandler = (response) => {
+const responseHandler = (response: any) => {
   if (response.status === 401 || response.status === 403) {
-    if(typeof window !== 'undefined') {
-      window.location.href = "/";
+    // Check if the request is to an authentication endpoint
+    const requestUrl = response.config?.url || '';
+    const authEndpoints = ['/auth/login', '/auth/signup', '/auth/forgot-password', '/auth/reset-password', '/auth/verify-otp'];
+    const isAuthEndpoint = authEndpoints.some(endpoint => requestUrl.includes(endpoint));
+    
+    // Don't clear user preferences or redirect if it's an authentication endpoint
+    // (e.g., login failure should not trigger logout)
+    if (!isAuthEndpoint) {
+      userPreferences.remove(ACCESS_TOKEN);
+      userPreferences.clear();
+      
+      // Don't redirect if we're on authentication pages (login, signup, forgot password)
+      if(typeof window !== 'undefined') {
+        const currentPath = window.location.pathname;
+        const authPages = ['/login', '/signup', '/forgotPassword'];
+        const isAuthPage = authPages.some(page => currentPath.startsWith(page));
+        
+        if (!isAuthPage) {
+          window.location.href = "/";
+        }
+      }
     }
-    userPreferences.remove(ACCESS_TOKEN);
-    userPreferences.clear();
   }
   return response;
 };
 
-const requestErrorHandler = (error) => {
+const requestErrorHandler = (error: any) => {
   return Promise.reject(error);
 };
 
-const responseErrorHandler = (error) => {
+const responseErrorHandler = (error: any) => {
   if (error.response) {
     if (error.response.status === 401 || error.response.status === 403) {
-      userPreferences.remove(ACCESS_TOKEN);
-      userPreferences.clear();
-      if(typeof window !== 'undefined') {
-        window.location.href = "/";
+      // Check if the request is to an authentication endpoint
+      const requestUrl = error.config?.url || '';
+      const authEndpoints = ['/auth/login', '/auth/signup', '/auth/forgot-password', '/auth/reset-password', '/auth/verify-otp'];
+      const isAuthEndpoint = authEndpoints.some(endpoint => requestUrl.includes(endpoint));
+      
+      // Don't clear user preferences or redirect if it's an authentication endpoint
+      // (e.g., login failure should not trigger logout)
+      if (!isAuthEndpoint) {
+        userPreferences.remove(ACCESS_TOKEN);
+        userPreferences.clear();
+        
+        // Don't redirect if we're on authentication pages (login, signup, forgot password)
+        if(typeof window !== 'undefined') {
+          const currentPath = window.location.pathname;
+          const authPages = ['/login', '/signup', '/forgotPassword'];
+          const isAuthPage = authPages.some(page => currentPath.startsWith(page));
+          
+          if (!isAuthPage) {
+            window.location.href = "/";
+          }
+        }
       }
       return Promise.reject(error);
     }

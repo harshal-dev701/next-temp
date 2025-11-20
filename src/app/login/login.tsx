@@ -5,7 +5,7 @@ import { LoginInputInterface } from '@/interfaces/authInterface';
 import * as Yup from 'yup';
 import Link from 'next/link';
 import { IoIosCloseCircle } from 'react-icons/io';
-import { login } from '@/services/authServices';
+import { loginService } from '@/services/authServices';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 
@@ -24,17 +24,15 @@ const LoginPage = () => {
     async (values: LoginInputInterface, setSubmitting: (isSubmitting: boolean) => void) => {
       try {
         setSubmitting(true);
-        const response = await login(values.email, values.password);
+        const response = await loginService(values.email, values.password);
+        console.log('response', response);
         if (response.status === 200) {
           router.push('/');
           toast.success(response.message || 'Login successfully');
-        } else {
-          toast.error(response.message || 'Login failed');
         }
       } catch (error: any) {
         console.error('Login error:', error);
-        toast.error(error?.message || 'Login failed');
-        setSubmitting(false);
+        toast.error(error?.message || error?.response?.data?.message || 'Login failed');
       } finally {
         setSubmitting(false);
       }
@@ -70,95 +68,95 @@ const LoginPage = () => {
 
         {/* Login Form */}
         <form onSubmit={formik.handleSubmit} className='mt-8 space-y-6'>
-            {/* Email Field */}
-            <div>
-              <label htmlFor='email' className='block text-sm font-medium text-gray-700 mb-1'>
-                Email
-              </label>
-              <input
-                id='email'
-                name='email'
-                type='email'
-                autoComplete='email'
-                value={values.email}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                className={`
+          {/* Email Field */}
+          <div>
+            <label htmlFor='email' className='block text-sm font-medium text-gray-700 mb-1'>
+              Email
+            </label>
+            <input
+              id='email'
+              name='email'
+              type='email'
+              autoComplete='email'
+              value={values.email}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              className={`
                   appearance-none relative block w-full px-3 py-3 border rounded-lg 
                   placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 
                   focus:ring-blue-500 focus:border-transparent transition duration-150
                   ${errors.email && touched.email ? 'border-red-500' : 'border-gray-300'}
                 `}
-                placeholder='you@example.com'
-              />
-              {errors.email && touched.email && (
-                <p className='mt-1 text-sm text-red-600 flex items-center gap-1'>
-                  <ErrorIcon className='text-red-500' size={20} />
-                  {errors.email}
-                </p>
-              )}
-            </div>
+              placeholder='you@example.com'
+            />
+            {errors.email && touched.email && (
+              <p className='mt-1 text-sm text-red-600 flex items-center gap-1'>
+                <ErrorIcon className='text-red-500' size={20} />
+                {errors.email}
+              </p>
+            )}
+          </div>
 
-            {/* Password Field */}
-            <div>
-              <label htmlFor='password' className='block text-sm font-medium text-gray-700 mb-1'>
-                Password
-              </label>
-              <div className='relative'>
-                <input
-                  id='password'
-                  name='password'
-                  type={showPassword ? 'text' : 'password'}
-                  autoComplete='current-password'
-                  value={values.password}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  className={`
+          {/* Password Field */}
+          <div>
+            <label htmlFor='password' className='block text-sm font-medium text-gray-700 mb-1'>
+              Password
+            </label>
+            <div className='relative'>
+              <input
+                id='password'
+                name='password'
+                type={showPassword ? 'text' : 'password'}
+                autoComplete='current-password'
+                value={values.password}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                className={`
                     appearance-none relative block w-full px-3 py-3 border rounded-lg 
                     placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 
                     focus:ring-blue-500 focus:border-transparent transition duration-150
                     ${errors.password && touched.password ? 'border-red-500' : 'border-gray-300'}
                   `}
-                  placeholder='Enter your password'
-                />
-                <button
-                  type='button'
-                  onClick={() => setShowPassword(!showPassword)}
-                  className='absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700 cursor-pointer'>
-                  {showPassword ? (
-                    <svg className='h-5 w-5 cursor-pointer' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
-                      <path
-                        strokeLinecap='round'
-                        strokeLinejoin='round'
-                        strokeWidth={2}
-                        d='M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.736m0 0L21 21'
-                      />
-                    </svg>
-                  ) : (
-                    <svg className='h-5 w-5 cursor-pointer' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
-                      <path
-                        strokeLinecap='round'
-                        strokeLinejoin='round'
-                        strokeWidth={2}
-                        d='M15 12a3 3 0 11-6 0 3 3 0 016 0z'
-                      />
-                      <path
-                        strokeLinecap='round'
-                        strokeLinejoin='round'
-                        strokeWidth={2}
-                        d='M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z'
-                      />
-                    </svg>
-                  )}
-                </button>
-              </div>
-              {errors.password && touched.password && (
-                <p className='mt-1 text-sm text-red-600 flex items-center gap-1'>
-                  <ErrorIcon className='text-red-500' size={20} />
-                  {errors.password}
-                </p>
-              )}
+                placeholder='Enter your password'
+              />
+              <button
+                type='button'
+                onClick={() => setShowPassword(!showPassword)}
+                className='absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700 cursor-pointer'>
+                {showPassword ? (
+                  <svg className='h-5 w-5 cursor-pointer' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      d='M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.736m0 0L21 21'
+                    />
+                  </svg>
+                ) : (
+                  <svg className='h-5 w-5 cursor-pointer' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      d='M15 12a3 3 0 11-6 0 3 3 0 016 0z'
+                    />
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      d='M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z'
+                    />
+                  </svg>
+                )}
+              </button>
             </div>
+            {errors.password && touched.password && (
+              <p className='mt-1 text-sm text-red-600 flex items-center gap-1'>
+                <ErrorIcon className='text-red-500' size={20} />
+                {errors.password}
+              </p>
+            )}
+          </div>
 
           {/* Remember Me & Forgot Password */}
           <div className='flex items-center justify-between'>
@@ -176,7 +174,7 @@ const LoginPage = () => {
               </label>
             </div>
 
-            <div className='text-sm' onClick={() => router.push("/forgotPassword")}>
+            <div className='text-sm' onClick={() => router.push('/forgotPassword')}>
               <a href='#' className='font-medium text-blue-600 hover:text-blue-500 transition'>
                 Forgot password?
               </a>
@@ -188,7 +186,7 @@ const LoginPage = () => {
             <button
               type='submit'
               disabled={isSubmitting}
-              className='group relative w-full flex justify-center py-3 px-4 border 
+              className='group relative w-full flex justify-center py-3 px-4 border cursor-pointer
               border-transparent text-sm font-medium rounded-lg text-white 
               bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 
               focus:ring-offset-2 focus:ring-blue-500 transition duration-150 

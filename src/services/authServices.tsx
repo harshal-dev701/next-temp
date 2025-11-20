@@ -1,4 +1,4 @@
-import { ACCESS_TOKEN, nonAuthenticatedPaths, USER_DETAILS } from '@/global/constants';
+import { nonAuthenticatedPaths, USER_DETAILS } from '@/global/constants';
 import { isEmpty } from '@/helper/helper';
 import { userPreferences } from '@/helper/userPreferenceSingleton';
 import customAxios from '@/serverCall';
@@ -12,20 +12,34 @@ export const isAuthenticated = (path: string): boolean => {
   return true;
 };
 
-export const login = async (email: string, password: string) => {
-  const response = await customAxios.post('/auth/login', {
-    email,
-    password
-  });
-  if (response.status === 200) {
-    userPreferences.set(USER_DETAILS, response?.data?.data);
-    return response?.data;
-  } else {
-    throw new Error(response?.data?.message || 'Login failed');
+export const loginService = async (email: string, password: string) => {
+  try {
+    const response = await customAxios.post('/auth/login', {
+      email,
+      password
+    });
+    if (response.status === 200) {
+      userPreferences.set(USER_DETAILS, response?.data?.data);
+      return response?.data;
+    } else {
+      throw new Error(response?.data?.message || 'Login failed');
+    }
+  } catch (error: any) {
+    // Handle axios errors properly
+    if (error.response) {
+      // Server responded with error status
+      throw new Error(error.response?.data?.message || 'Login failed');
+    } else if (error.request) {
+      // Request was made but no response received
+      throw new Error('Network error. Please check your connection.');
+    } else {
+      // Something else happened
+      throw new Error(error?.message || 'Login failed');
+    }
   }
 };
 
-export const signup = async (firstName: string, lastName: string, email: string, password: string) => {
+export const signupService = async (firstName: string, lastName: string, email: string, password: string) => {
   const response = await customAxios.post('/auth/signup', {
     firstName,
     lastName,
@@ -39,7 +53,7 @@ export const signup = async (firstName: string, lastName: string, email: string,
   }
 };
 
-export const sendForgotPasswordOTP = async (email: string) => {
+export const sendForgotPasswordOTPService = async (email: string) => {
   const response = await customAxios.post('/auth/forgot-password', {
     email
   });
@@ -50,7 +64,7 @@ export const sendForgotPasswordOTP = async (email: string) => {
   }
 };
 
-export const verifyOTP = async (email: string, otp: string) => {
+export const verifyOTPService = async (email: string, otp: string) => {
   const response = await customAxios.post('/auth/verify-otp', {
     email,
     otp
@@ -62,7 +76,7 @@ export const verifyOTP = async (email: string, otp: string) => {
   }
 };
 
-export const resetPassword = async (email: string, otp: string, newPassword: string) => {
+export const resetPasswordService = async (email: string, otp: string, newPassword: string) => {
   const response = await customAxios.post('/auth/reset-password', {
     email,
     otp,
@@ -72,5 +86,14 @@ export const resetPassword = async (email: string, otp: string, newPassword: str
     return response?.data;
   } else {
     throw new Error(response?.data?.message || 'Password reset failed');
+  }
+};
+
+export const logoutService = async () => {
+  const response = await customAxios.post('/auth/logout');
+  if (response.status === 200) {
+    return response?.data;
+  } else {
+    throw new Error(response?.data?.message || 'Logout failed');
   }
 };

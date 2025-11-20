@@ -2,7 +2,7 @@
 import React, { useCallback, useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { signup } from '@/services/authServices';
+import { signupService } from '@/services/authServices';
 import { IoIosCloseCircle } from 'react-icons/io';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
@@ -22,16 +22,14 @@ const SignupPage = () => {
     async (values: any, setSubmitting: (isSubmitting: boolean) => void) => {
       try {
         setSubmitting(true);
-        const response = await signup(values.firstName, values.lastName, values.email, values.password);
+        const response = await signupService(values.firstName, values.lastName, values.email, values.password);
         if (response.status === 200) {
           router.push('/login');
           toast.success(response.message || 'Signup successfully');
-        } else {
-          toast.error(response.message || 'Signup failed');
-        }
+        } 
       } catch (error: any) {
         console.error('error', error);
-        toast.error(error?.message || 'Internal server error');
+        toast.error(error?.message || error?.response?.data?.message || 'Signup failed');
         setSubmitting(false);
       } finally {
         setSubmitting(false);
@@ -292,7 +290,7 @@ const SignupPage = () => {
             <button
               type='submit'
               disabled={isSubmitting}
-              className='group relative w-full flex justify-center py-3 px-4 border 
+              className='group relative w-full flex justify-center py-3 px-4 border cursor-pointer
           border-transparent text-sm font-medium rounded-lg text-white 
           bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 
           focus:ring-offset-2 focus:ring-purple-500 transition duration-150 

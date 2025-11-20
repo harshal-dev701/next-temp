@@ -5,7 +5,7 @@ import { ForgotPasswordInterface, OTPVerificationInterface, ResetPasswordInterfa
 import * as Yup from 'yup';
 import Link from 'next/link';
 import { IoIosCloseCircle } from 'react-icons/io';
-import { sendForgotPasswordOTP, verifyOTP, resetPassword } from '@/services/authServices';
+import { resetPasswordService, verifyOTPService, sendForgotPasswordOTPService } from '@/services/authServices';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 
@@ -45,7 +45,7 @@ const ForgotPassword = () => {
     onSubmit: async (values, { setSubmitting }) => {
       try {
         setSubmitting(true);
-        const response = await sendForgotPasswordOTP(values.email);
+        const response = await sendForgotPasswordOTPService(values.email);
         if (response.status === 200) {
           setEmail(values.email);
           setCurrentStep('otp');
@@ -103,7 +103,7 @@ const ForgotPassword = () => {
   const handleOtpSubmit = useCallback(
     async (otpValue: string) => {
       try {
-        const response = await verifyOTP(email, otpValue);
+        const response = await verifyOTPService(email, otpValue);
         if (response.status === 200) {
           setCurrentStep('reset');
           toast.success('OTP verified successfully!');
@@ -122,7 +122,7 @@ const ForgotPassword = () => {
 
     try {
       setIsResending(true);
-      const response = await sendForgotPasswordOTP(email);
+      const response = await sendForgotPasswordOTPService(email);
       if (response.status === 200) {
         setResendTimer(60);
         setOtp(['', '', '', '', '', '']);
@@ -154,7 +154,7 @@ const ForgotPassword = () => {
       try {
         setSubmitting(true);
         const otpValue = otp.join('');
-        const response = await resetPassword(email, otpValue, values.password);
+        const response = await resetPasswordService(email, otpValue, values.password);
         if (response.status === 200) {
           toast.success('Password reset successfully');
           router.push('/login');

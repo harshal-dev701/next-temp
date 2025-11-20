@@ -13,6 +13,7 @@ import { HiOutlineMoon } from 'react-icons/hi';
 import { LuMonitor, LuSun } from 'react-icons/lu';
 import customAxios from '@/serverCall';
 import { userPreferences } from '@/helper/userPreferenceSingleton';
+import { logoutService } from '@/services/authServices';
 
 const getLanguageLabel = (lang: string) => {
   switch (lang) {
@@ -83,10 +84,13 @@ export default function Header() {
     try {
       // Clear the auth cookie
       userPreferences.clear();
-      const response = await customAxios.post('/auth/logout');
-
-      router.push('/login');
-      toast.success(response?.data?.message || 'Logout successfully');
+      const response = await logoutService();
+      if (response.status === 200) {
+        router.push('/login');
+        toast.success(response?.data?.message || 'Logout successfully');
+      } else {
+        toast.error(response?.data?.message || 'Logout failed');
+      }
     } catch (error) {
       console.error('Logout error:', error);
       toast.error(error?.message || 'Logout failed');
