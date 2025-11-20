@@ -26,15 +26,19 @@ export const POST = async (request: Request) => {
     cookieStore.set(ACCESS_TOKEN, token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      maxAge: 60 * 60 * 24 * 30,
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 24, // 1 day
       path: '/'
     });
 
     const { password: _, __v, ...userData } = user.toObject();
 
-    return new NextResponse(JSON.stringify({ status: 200, message: 'Login successful', data: {...userData, access_token: token} }), {
-      headers: { 'Set-Cookie': cookieStore.toString() }
-    });
+    const response = new NextResponse(
+      JSON.stringify({ status: 200, message: 'Login successful', data: {...userData, access_token: token} }),
+      { status: 200 }
+    );
+
+    return response;
   } catch (error: any) {
     console.error('POST error:', error);
     return Response.json({ error: 'Internal server error' }, { status: 500 });

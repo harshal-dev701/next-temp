@@ -23,7 +23,6 @@ const SignupPage = () => {
       try {
         setSubmitting(true);
         const response = await signup(values.firstName, values.lastName, values.email, values.password);
-        console.log('response', response);
         if (response.status === 200) {
           router.push('/login');
           toast.success(response.message || 'Signup successful');

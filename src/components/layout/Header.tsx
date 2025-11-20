@@ -7,7 +7,6 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { ChevronDown } from 'lucide-react';
 import { Button } from '../ui/button';
-import { ACCESS_TOKEN, USER_DETAILS, USER_PREFERENCES } from '@/global/constants';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 
@@ -98,13 +97,20 @@ export default function Header() {
     }
   };
 
-  const handleSelect = (item) => {
+  const handleSelect = (item: string) => {
     changeLanguage(item);
     // setOpen(false); // Close popover after selection
   };
 
-  const logout = () => {
+  const logout = async () => {
     try {
+      // Clear the auth cookie
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include'
+      });
+      
+      // Clear localStorage
       localStorage.clear();
       router.push('/login');
       toast.success('Logout successful');
@@ -124,10 +130,10 @@ export default function Header() {
           <div className='flex shrink-0'>
             <Link
               href='/'
-              className='text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-light-blue transition-colors duration-200'
-              onClick={closeMenu}
+              className='text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100  transition-colors duration-200'
+              // onClick={closeMenu}
               aria-label='Home'>
-              {/* Blog */}
+              Logo
             </Link>
           </div>
 
@@ -270,7 +276,7 @@ export default function Header() {
             </li>
             <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger
-                className='flex lg:py-4 max-lg:w-[100px] h-auto w-[150px] border cursor-pointer border-border relative ring-0 focus:outline-none focus:ring-0 focus:border-black font-size-18 !font-normal xxl:!px-30 flex-shrink-0 language-selector header-text items-center justify-between px-3 py-2 bg-white hover:bg-gray-50 transition-colors'
+                className='flex lg:py-4 max-lg:w-[100px] h-auto w-[150px] border cursor-pointer border-border relative ring-0 focus:outline-none focus:ring-0 focus:border-black font-size-18  xxl:!px-30  language-selector header-text items-center justify-between px-3 py-2 bg-white hover:bg-gray-50 transition-colors'
                 aria-label={`Select language. Current language: ${getLanguageLabel(language)}`}>
                 <span>{getLanguageLabel(language)}</span>
                 <ChevronDown
@@ -306,16 +312,15 @@ export default function Header() {
                 </div>
               </PopoverContent>
             </Popover>
+            <div>
+              <Button
+                variant='outline'
+                className='text-gray hover:text-blue-600 cursor-pointer dark:hover:text-light-blue font-medium transition-colors duration-200 px-3 py-2'
+                onClick={logout}>
+                Logout
+              </Button>
+            </div>
           </ul>
-
-          <div>
-            <Button
-              variant='outline'
-              className='text-gray hover:text-blue-600 cursor-pointer dark:hover:text-light-blue font-medium transition-colors duration-200 px-3 py-2'
-              onClick={logout}>
-              Logout
-            </Button>
-          </div>
 
           {/* Mobile menu button and theme selector */}
         </div>

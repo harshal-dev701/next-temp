@@ -17,45 +17,77 @@ const checkAuthentication = (): boolean => {
   return !!(accessToken || userData);
 };
 
+const clearAuthCookie = async () => {
+  try {
+    await fetch('/api/auth/logout', {
+      method: 'POST',
+      credentials: 'include'
+    });
+  } catch (error) {
+    console.error('Failed to clear auth cookie:', error);
+  }
+};
+
 export default function ConditionalLayout({ children }: ConditionalLayoutProps) {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(checkAuthentication());
   const [isLoading, setIsLoading] = useState(true);
   const pathname = usePathname();
-  const hideLayout = pathname?.startsWith('/login') || pathname?.startsWith('/signup');
+
+  // Function to check and clear cookie if user_preferences is missing
+  const checkAndClearCookieIfNeeded = async () => {
+    const userPrefs = localStorage.getItem(USER_PREFERENCES);
+    if (!userPrefs) {
+      // user_preferences is missing, clear the cookie
+      await clearAuthCookie();
+    }
+  };
 
   useEffect(() => {
-    // Initial check
-    const authenticated = checkAuthentication();
-    console.log('authenticated', authenticated);
-    setIsAuthenticated(authenticated);
-    setIsLoading(false);
+    // Check on mount if user_preferences is missing
+    checkAndClearCookieIfNeeded();
 
     // Listen for storage changes (e.g., when user logs in/out in other tabs)
-    const handleStorageChange = (e: StorageEvent) => {
+    const handleStorageChange = async (e: StorageEvent) => {
       if (e.key === null || e.key === USER_PREFERENCES) {
+        await checkAndClearCookieIfNeeded();
         const authenticated = checkAuthentication();
         setIsAuthenticated(authenticated);
       }
     };
 
+    // Listen for custom localStorageChange event (from userPreferenceSingleton)
+    const handleLocalStorageChange = async () => {
+      await checkAndClearCookieIfNeeded();
+      const authenticated = checkAuthentication();
+      setIsAuthenticated(authenticated);
+    };
+
     window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('localStorageChange', handleLocalStorageChange);
+    setIsLoading(false);
 
     return () => {
       window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('localStorageChange', handleLocalStorageChange);
     };
   }, []);
 
-  // Show loading state or nothing while checking
-  if (isLoading) {
-    return <>{children}</>;
-  }
+  // Check on route changes as well
+  useEffect(() => {
+    checkAndClearCookieIfNeeded();
+    const authenticated = checkAuthentication();
+    setIsAuthenticated(authenticated);
+  }, [pathname]);
 
   return (
     <>
-      {!hideLayout && isAuthenticated && <Header />}
-      <main className='min-h-screen w-full h-full'>{children}</main>
-      {!hideLayout && isAuthenticated && <Footer />}
+      {!isLoading && (
+        <>
+          {isAuthenticated && <Header />}
+          <main className='min-h-screen w-full h-full'>{children}</main>
+          {isAuthenticated && <Footer />}
+        </>
+      )}
     </>
   );
 }
-
