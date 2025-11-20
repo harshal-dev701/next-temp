@@ -1,7 +1,7 @@
 import connect from '@/lib/dbConnection';
 import User from '@/lib/modals/users';
 import { NextResponse } from 'next/server';
-import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 
 export const POST = async (request: Request) => {
   try {
@@ -15,9 +15,10 @@ export const POST = async (request: Request) => {
     if (user) {
       return new NextResponse(JSON.stringify({ message: 'User already exists' }), { status: 400 });
     }
-    const newUser = new User(body);
+    const hashPass = await bcrypt.hash(password, 10);
+    const newUser = new User({ firstName, lastName, email, password: hashPass });
     await newUser.save();
-    const token = jwt.sign({ userId: newUser._id }, process.env.NEXT_PUBLIC_JWT_SECRET!, { expiresIn: '1d' });
+
     const { password: _, __v, ...userData } = newUser.toObject();
     return new NextResponse(JSON.stringify({ status: 200, message: 'Signup successful', data: userData }), {
       status: 200

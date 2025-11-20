@@ -192,7 +192,7 @@ export const getFormattedDate = (date: any) => {
  * @desc split user name into firstname and lastname
  */
 export const getFirstAndLastName = (userName: any) => {
-  let firstname, lastname;
+  let firstname: string, lastname: string;
   const args = (userName || '').split(' ');
   if (args && args.length >= 2) {
     firstname = args[0];

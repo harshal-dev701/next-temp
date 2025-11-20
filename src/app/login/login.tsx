@@ -70,7 +70,6 @@ const LoginPage = () => {
 
         {/* Login Form */}
         <form onSubmit={formik.handleSubmit} className='mt-8 space-y-6'>
-          <div className='rounded-md shadow-sm space-y-4'>
             {/* Email Field */}
             <div>
               <label htmlFor='email' className='block text-sm font-medium text-gray-700 mb-1'>
@@ -160,7 +159,6 @@ const LoginPage = () => {
                 </p>
               )}
             </div>
-          </div>
 
           {/* Remember Me & Forgot Password */}
           <div className='flex items-center justify-between'>

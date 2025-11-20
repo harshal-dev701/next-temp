@@ -45,7 +45,8 @@ const SignupPage = () => {
       firstName: '',
       lastName: '',
       email: '',
-      password: ''
+      password: '',
+      confirmPassword: ''
     },
     validationSchema: Yup.object({
       email: Yup.string().email('Invalid email').required('Email is required'),
