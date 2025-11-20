@@ -28,7 +28,7 @@ export default function RootLayout({
   
   return (
     <html lang='en' suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased w-full h-full`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased w-full h-full `}>
         <Providers>
           <ConditionalLayout>{children}</ConditionalLayout>
           <Toaster />

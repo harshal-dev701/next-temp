@@ -84,7 +84,9 @@ export default function ConditionalLayout({ children }: ConditionalLayoutProps) 
       {!isLoading && (
         <>
           {isAuthenticated && <Header />}
-          <main className='min-h-screen w-full h-full'>{children}</main>
+          <main className='min-h-screen w-full h-full dark:bg-gray-900 bg-white transition-all duration-500'>
+            {children}
+          </main>
           {isAuthenticated && <Footer />}
         </>
       )}

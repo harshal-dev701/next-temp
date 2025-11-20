@@ -9,6 +9,8 @@ import { ChevronDown } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
+import { HiOutlineMoon } from 'react-icons/hi';
+import { LuMonitor, LuSun } from 'react-icons/lu';
 
 const getLanguageLabel = (lang: string) => {
   switch (lang) {
@@ -62,38 +64,11 @@ export default function Header() {
 
   const getThemeIcon = () => {
     if (theme === 'light') {
-      return (
-        <svg className='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-          <path
-            strokeLinecap='round'
-            strokeLinejoin='round'
-            strokeWidth={2}
-            d='M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z'
-          />
-        </svg>
-      );
+      return <LuSun size={20} className='text-orange-400' />;
     } else if (theme === 'dark') {
-      return (
-        <svg className='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-          <path
-            strokeLinecap='round'
-            strokeLinejoin='round'
-            strokeWidth={2}
-            d='M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z'
-          />
-        </svg>
-      );
+      return <HiOutlineMoon size={20} className='text-gray-700 dark:text-gray-400' />;
     } else {
-      return (
-        <svg className='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-          <path
-            strokeLinecap='round'
-            strokeLinejoin='round'
-            strokeWidth={2}
-            d='M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z'
-          />
-        </svg>
-      );
+      return <LuMonitor size={20} className='text-gray-700 dark:text-gray-400' />;
     }
   };
 
@@ -109,7 +84,7 @@ export default function Header() {
         method: 'POST',
         credentials: 'include'
       });
-      
+
       // Clear localStorage
       localStorage.clear();
       router.push('/login');
@@ -123,7 +98,7 @@ export default function Header() {
   return (
     <header
       suppressHydrationWarning
-      className={`sticky top-0 z-50 w-full transition-all duration-300 ${'bg-light-blue/70 dark:bg-gray-950/70 backdrop-blur-md shadow-lg border-b border-gray-200/20 dark:border-gray-700/20'}`}>
+      className={`sticky top-0 z-50 w-full transition-all duration-500 ${'bg-light-blue/70 dark:bg-gray-950 backdrop-blur-md shadow-lg border-b border-gray-200/20 dark:border-gray-700/20'}`}>
       <nav className='w-full mx-auto px-4 sm:px-6 lg:px-8' aria-label='Main navigation'>
         <div className='flex items-center justify-between h-14 md:h-16'>
           {/* Logo/Brand */}
@@ -142,28 +117,28 @@ export default function Header() {
             <li>
               <Link
                 href='/'
-                className='text-gray hover:text-blue-600 dark:hover:text-light-blue font-medium transition-colors duration-200 px-3 py-2'>
+                className='text-gray dark:text-white hover:text-blue-600 dark:hover:text-light-blue  font-medium transition-colors duration-200 px-3 py-2'>
                 {t.navbar.menu.home}
               </Link>
             </li>
             <li>
               <Link
                 href='/'
-                className='text-gray hover:text-blue-600 dark:hover:text-light-blue font-medium transition-colors duration-200 px-3 py-2'>
+                className='text-gray dark:text-white hover:text-blue-600 dark:hover:text-light-blue font-medium transition-colors duration-200 px-3 py-2'>
                 {t.navbar.menu.blog}
               </Link>
             </li>
             <li>
               <Link
                 href='/'
-                className='text-gray hover:text-blue-600 dark:hover:text-light-blue font-medium transition-colors duration-200 px-3 py-2'>
+                className='text-gray dark:text-white hover:text-blue-600 dark:hover:text-light-blue font-medium transition-colors duration-200 px-3 py-2'>
                 {t.navbar.menu.about}
               </Link>
             </li>
             <li>
               <Link
                 href='/'
-                className='text-gray hover:text-blue-600 dark:hover:text-light-blue font-medium transition-colors duration-200 px-3 py-2'>
+                className='text-gray dark:text-white hover:text-blue-600 dark:hover:text-light-blue font-medium transition-colors duration-200 px-3 py-2'>
                 {t.navbar.menu.contact}
               </Link>
             </li>
@@ -172,7 +147,11 @@ export default function Header() {
             <li className='relative' ref={themeDropdownDesktopRef as unknown as Ref<HTMLLIElement>}>
               <button
                 onClick={() => setIsThemeDropdownOpen(!isThemeDropdownOpen)}
-                className='flex items-center justify-center p-2 rounded-md cursor-pointer text-gray-700 dark:text-gray-400 hover:text-blue-600 dark:hover:text-light-blue hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-light-blue transition-colors duration-200'
+                className={`flex items-center justify-center p-2 rounded-full border border-orange-400 dark:border-blue-600 transition-colors duration-200 cursor-pointer ${
+                  theme === 'light'
+                    ? 'text-orange-400 bg-orange-50 hover:bg-orange-100'
+                    : 'text-gray-700 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-500 hover:bg-gray-100 dark:hover:bg-gray-800'
+                }`}
                 aria-label='Theme selector'>
                 {getThemeIcon()}
               </button>
