@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 import { cookies } from 'next/headers';
 import { ACCESS_TOKEN } from '@/global/constants';
+import bcrypt from 'bcrypt';
 
 export const POST = async (request: Request) => {
   try {
@@ -14,11 +15,12 @@ export const POST = async (request: Request) => {
     }
     await connect();
     const user = await User.findOne({ email });
-    
+
     if (!user) {
       return new NextResponse(JSON.stringify({ message: 'User not found' }), { status: 404 });
     }
-    if (user.password !== password) {
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
       return new NextResponse(JSON.stringify({ message: 'Invalid password' }), { status: 401 });
     }
     const token = jwt.sign({ userId: user._id }, process.env.NEXT_PUBLIC_JWT_SECRET!, { expiresIn: '1d' });
@@ -32,9 +34,9 @@ export const POST = async (request: Request) => {
     });
 
     const { password: _, __v, ...userData } = user.toObject();
-
+    console.log('userDatalllllll', userData);
     const response = new NextResponse(
-      JSON.stringify({ status: 200, message: 'Login successful', data: {...userData, access_token: token} }),
+      JSON.stringify({ status: 200, message: 'Login successfully', data: { ...userData, access_token: token } }),
       { status: 200 }
     );
 

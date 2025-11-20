@@ -11,6 +11,8 @@ import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { HiOutlineMoon } from 'react-icons/hi';
 import { LuMonitor, LuSun } from 'react-icons/lu';
+import customAxios from '@/serverCall';
+import { userPreferences } from '@/helper/userPreferenceSingleton';
 
 const getLanguageLabel = (lang: string) => {
   switch (lang) {
@@ -80,18 +82,14 @@ export default function Header() {
   const logout = async () => {
     try {
       // Clear the auth cookie
-      await fetch('/api/auth/logout', {
-        method: 'POST',
-        credentials: 'include'
-      });
+      userPreferences.clear();
+      const response = await customAxios.post('/auth/logout');
 
-      // Clear localStorage
-      localStorage.clear();
       router.push('/login');
-      toast.success('Logout successful');
+      toast.success(response?.data?.message || 'Logout successfully');
     } catch (error) {
       console.error('Logout error:', error);
-      toast.error('Logout failed');
+      toast.error(error?.message || 'Logout failed');
     }
   };
 

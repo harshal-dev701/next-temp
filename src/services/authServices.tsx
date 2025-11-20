@@ -1,6 +1,7 @@
 import { ACCESS_TOKEN, nonAuthenticatedPaths, USER_DETAILS } from '@/global/constants';
 import { isEmpty } from '@/helper/helper';
 import { userPreferences } from '@/helper/userPreferenceSingleton';
+import customAxios from '@/serverCall';
 
 export const isAuthenticated = (path: string): boolean => {
   // Check if the path requires authentication
@@ -12,31 +13,28 @@ export const isAuthenticated = (path: string): boolean => {
 };
 
 export const login = async (email: string, password: string) => {
-  const response = await fetch('/api/auth/login', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ email, password })
+  const response = await customAxios.post('/auth/login', {
+    email,
+    password
   });
-  const data = await response.json();
   if (response.status === 200) {
-    userPreferences.set(USER_DETAILS, data?.data);
-    return data;
+    userPreferences.set(USER_DETAILS, response?.data);
+    return response?.data;
   } else {
-    throw new Error(data?.message || 'Login failed');
+    throw new Error(response?.data?.message || 'Login failed');
   }
 };
 
 export const signup = async (firstName: string, lastName: string, email: string, password: string) => {
-  const response = await fetch('/api/auth/signup', {
-    method: 'POST',
-    body: JSON.stringify({ firstName, lastName, email, password })
+  const response = await customAxios.post('/auth/signup', {
+    firstName,
+    lastName,
+    email,
+    password
   });
-  const data = await response.json();
   if (response.status === 200) {
-    return data;
+    return response?.data;
   } else {
-    throw new Error(data?.message || 'Signup failed');
+    throw new Error(response?.data?.message || 'Signup failed');
   }
 };

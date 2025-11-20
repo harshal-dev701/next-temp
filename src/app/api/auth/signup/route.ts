@@ -20,7 +20,7 @@ export const POST = async (request: Request) => {
     await newUser.save();
 
     const { password: _, __v, ...userData } = newUser.toObject();
-    return new NextResponse(JSON.stringify({ status: 200, message: 'Signup successful', data: userData }), {
+    return new NextResponse(JSON.stringify({ status: 200, message: 'Signup successfully', data: userData }), {
       status: 200
     });
   } catch (error: any) {

@@ -6,6 +6,7 @@ import Footer from './Footer';
 import { USER_DETAILS, USER_PREFERENCES } from '@/global/constants';
 import { userPreferences } from '@/helper/userPreferenceSingleton';
 import { setupToken } from '@/helper/authTokenHelper';
+import customAxios from '@/serverCall';
 
 interface ConditionalLayoutProps {
   children: React.ReactNode;
@@ -19,12 +20,9 @@ const checkAuthentication = (): boolean => {
 
 const clearAuthCookie = async () => {
   try {
-    await fetch('/api/auth/logout', {
-      method: 'POST',
-      credentials: 'include'
-    });
+    await customAxios.post('/auth/logout');
   } catch (error) {
-    console.error('Failed to clear auth cookie:', error);
+    console.error('Failed to clear auth token:', error);
   }
 };
 

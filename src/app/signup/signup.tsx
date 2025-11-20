@@ -25,7 +25,7 @@ const SignupPage = () => {
         const response = await signup(values.firstName, values.lastName, values.email, values.password);
         if (response.status === 200) {
           router.push('/login');
-          toast.success(response.message || 'Signup successful');
+          toast.success(response.message || 'Signup successfully');
         } else {
           toast.error(response.message || 'Signup failed');
         }

@@ -24,15 +24,15 @@ const Toaster = () => {
         success: {
           duration: 3000,
           style: {
-            background: '#10b981',
-            color: '#fff',
+            background: '#fff',
+            color: '#000',
           },
         },
         error: {
           duration: 3000,
           style: {
-            background: '#ef4444',
-            color: '#fff',
+            background: '#fff',
+            color: '#000',
           },
         },
       }}
