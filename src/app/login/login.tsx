@@ -7,7 +7,6 @@ import Link from 'next/link';
 import { IoIosCloseCircle } from 'react-icons/io';
 import { loginService } from '@/services/authServices';
 import toast from 'react-hot-toast';
-import { useRouter } from 'next/navigation';
 
 // Type-safe icon component wrapper for React 19 compatibility
 const ErrorIcon: React.FC<{ className?: string; size?: number }> = (props) => {
@@ -18,7 +17,6 @@ const ErrorIcon: React.FC<{ className?: string; size?: number }> = (props) => {
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-  const router = useRouter();
 
   const handleSubmit = useCallback(
     async (values: LoginInputInterface, setSubmitting: (isSubmitting: boolean) => void) => {
@@ -26,17 +24,18 @@ const LoginPage = () => {
         setSubmitting(true);
         const response = await loginService(values.email, values.password);
         if (response.status === 200) {
-          router.push('/');
           toast.success(response.message || 'Login successfully');
+          // Use window.location.href for full page reload to trigger middleware
+          // This ensures the cookie is read and middleware handles the redirect
+          window.location.href = '/';
         }
       } catch (error: any) {
         console.error('Login error:', error);
         toast.error(error?.message || error?.response?.data?.message || 'Login failed');
-      } finally {
         setSubmitting(false);
       }
     },
-    [router]
+    []
   );
 
   const formik = useFormik<LoginInputInterface>({
@@ -173,10 +172,10 @@ const LoginPage = () => {
               </label>
             </div>
 
-            <div className='text-sm' onClick={() => router.push('/forgotPassword')}>
-              <a href='#' className='font-medium text-blue-600 hover:text-blue-500 transition'>
+            <div className='text-sm'>
+              <Link href='/forgotPassword' className='font-medium text-blue-600 hover:text-blue-500 transition'>
                 Forgot password?
-              </a>
+              </Link>
             </div>
           </div>
 

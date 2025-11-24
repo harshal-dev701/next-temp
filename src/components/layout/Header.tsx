@@ -11,7 +11,6 @@ import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { HiOutlineMoon } from 'react-icons/hi';
 import { LuMonitor, LuSun } from 'react-icons/lu';
-import customAxios from '@/serverCall';
 import { userPreferences } from '@/helper/userPreferenceSingleton';
 import { logoutService } from '@/services/authServices';
 

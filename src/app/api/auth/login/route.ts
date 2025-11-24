@@ -34,7 +34,6 @@ export const POST = async (request: Request) => {
     });
 
     const { password: _, __v, ...userData } = user.toObject();
-    console.log('userDatalllllll', userData);
     const response = new NextResponse(
       JSON.stringify({ status: 200, message: 'Login successfully', data: { ...userData, access_token: token } }),
       { status: 200 }

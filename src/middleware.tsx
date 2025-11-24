@@ -2,6 +2,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { ACCESS_TOKEN } from './global/constants';
+import jwt from 'jsonwebtoken';
 
 // Public routes that don't require authentication (excluding home page)
 const publicRoutes: string[] = [
@@ -15,12 +16,21 @@ const publicRoutes: string[] = [
   '/pricing'
 ];
 
+// Function to validate JWT token
+function isValidToken(token: string): boolean {
+  try {
+    const decoded = jwt.verify(token, process.env.NEXT_PUBLIC_JWT_SECRET!);
+    return !!decoded;
+  } catch (error) {
+    return false;
+  }
+}
+
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   
   // Get the access token from cookies
-  const token = req.cookies.get(ACCESS_TOKEN)?.value;
-
+  const token = req.cookies.get(ACCESS_TOKEN)?.value || "";
 
   // Skip middleware for API routes
   if (pathname.startsWith('/api/')) {
@@ -32,13 +42,16 @@ export function middleware(req: NextRequest) {
     pathname === route || pathname.startsWith(route)
   );
 
-  // If user has token and tries to access login/signup, redirect to home
-  if (token && (pathname === '/login' || pathname === '/signup')) {
+  // Validate token if it exists
+  const isAuthenticated = token && isValidToken(token);
+
+  // If user is authenticated and tries to access login/signup, redirect to home
+  if (isAuthenticated && (pathname === '/login' || pathname === '/signup')) {
     return NextResponse.redirect(new URL('/', req.url));
   }
 
-  // If user doesn't have token and tries to access protected route, redirect to login
-  if (!token && !isPublicRoute) {
+  // If user is not authenticated and tries to access protected route, redirect to login
+  if (!isAuthenticated && !isPublicRoute) {
     const loginUrl = new URL('/login', req.url);
     return NextResponse.redirect(loginUrl);
   }
