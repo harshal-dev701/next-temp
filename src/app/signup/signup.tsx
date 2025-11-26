@@ -2,7 +2,7 @@
 import React, { useCallback, useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { signupService } from '@/services/authServices';
+import { signupService } from '@/services/auth.services';
 import { IoIosCloseCircle } from 'react-icons/io';
 import Link from 'next/link';
 import toast from 'react-hot-toast';

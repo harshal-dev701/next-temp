@@ -1,12 +1,12 @@
 'use client';
 import { useFormik } from 'formik';
-import React, { useCallback, useState } from 'react';
+import React, { Activity, useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { LoginInputInterface } from '@/interfaces/authInterface';
 import * as Yup from 'yup';
 import Link from 'next/link';
 import { IoIosCloseCircle } from 'react-icons/io';
-import { loginService } from '@/services/authServices';
+import { loginService } from '@/services/auth.services';
 import toast from 'react-hot-toast';
 
 // Type-safe icon component wrapper for React 19 compatibility
@@ -27,8 +27,6 @@ const LoginPage = () => {
         const response = await loginService(values.email, values.password);
         if (response.status === 200) {
           toast.success(response.message || 'Login successfully');
-          // Use router.push for client-side navigation without page refresh
-          // The cookie is set in the API response, so middleware will allow access
           router.push('/');
         }
       } catch (error: any) {
@@ -89,12 +87,12 @@ const LoginPage = () => {
                 `}
               placeholder='you@example.com'
             />
-            {errors.email && touched.email && (
+            <Activity mode={errors.email && touched.email ? 'visible' : 'hidden'}>
               <p className='mt-1 text-sm text-red-600 flex items-center gap-1'>
                 <ErrorIcon className='text-red-500' size={20} />
                 {errors.email}
               </p>
-            )}
+            </Activity>
           </div>
 
           {/* Password Field */}
@@ -150,12 +148,12 @@ const LoginPage = () => {
                 )}
               </button>
             </div>
-            {errors.password && touched.password && (
+            <Activity mode={errors.password && touched.password ? 'visible' : 'hidden'}>
               <p className='mt-1 text-sm text-red-600 flex items-center gap-1'>
                 <ErrorIcon className='text-red-500' size={20} />
                 {errors.password}
               </p>
-            )}
+            </Activity>
           </div>
 
           {/* Remember Me & Forgot Password */}

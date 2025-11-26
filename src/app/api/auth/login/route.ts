@@ -22,7 +22,7 @@ export const POST = async (request: Request) => {
     if (!isPasswordValid) {
       return new NextResponse(JSON.stringify({ message: 'Invalid password' }), { status: 401 });
     }
-    const token = jwt.sign({ userId: user._id }, process.env.NEXT_PUBLIC_JWT_SECRET!, { expiresIn: '1d' });
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET!, { expiresIn: '1d' });
 
     const { password: _, __v, ...userData } = user.toObject();
     const response = new NextResponse(

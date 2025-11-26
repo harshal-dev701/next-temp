@@ -1,11 +1,11 @@
 'use client';
 import { useFormik } from 'formik';
-import React, { useCallback, useState, useEffect, useRef } from 'react';
+import React, { useCallback, useState, useEffect, useRef, Activity } from 'react';
 import { ForgotPasswordInterface, ResetPasswordInterface } from '@/interfaces/authInterface';
 import * as Yup from 'yup';
 import Link from 'next/link';
 import { IoIosCloseCircle } from 'react-icons/io';
-import { resetPasswordService, verifyOTPService, sendForgotPasswordOTPService } from '@/services/authServices';
+import { resetPasswordService, verifyOTPService, sendForgotPasswordOTPService } from '@/services/auth.services';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 
@@ -143,9 +143,7 @@ const ForgotPassword = () => {
       confirmPassword: ''
     },
     validationSchema: Yup.object({
-      password: Yup.string()
-        .min(6, 'Password must be at least 6 characters')
-        .required('Password is required'),
+      password: Yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
       confirmPassword: Yup.string()
         .oneOf([Yup.ref('password')], 'Passwords must match')
         .required('Please confirm your password')
@@ -184,8 +182,8 @@ const ForgotPassword = () => {
                   currentStep === step.key
                     ? 'bg-blue-600 text-white scale-110'
                     : steps.findIndex((s) => s.key === currentStep) > index
-                      ? 'bg-green-500 text-white'
-                      : 'bg-gray-200 text-gray-600'
+                    ? 'bg-green-500 text-white'
+                    : 'bg-gray-200 text-gray-600'
                 }`}>
                 {steps.findIndex((s) => s.key === currentStep) > index ? (
                   <svg className='w-6 h-6' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
@@ -195,10 +193,7 @@ const ForgotPassword = () => {
                   step.number
                 )}
               </div>
-              <p
-                className={`mt-2 text-xs font-medium ${
-                  currentStep === step.key ? 'text-blue-600' : 'text-gray-500'
-                }`}>
+              <p className={`mt-2 text-xs font-medium ${currentStep === step.key ? 'text-blue-600' : 'text-gray-500'}`}>
                 {step.label}
               </p>
             </div>
@@ -232,35 +227,38 @@ const ForgotPassword = () => {
         {renderStepIndicator()}
 
         {/* Email Step */}
-        {currentStep === 'email' && (
+        <Activity mode={currentStep === 'email' ? 'visible' : 'hidden'}>
+          {/* {currentStep === 'email' && ( */}
           <form onSubmit={emailFormik.handleSubmit} className='mt-8 space-y-6'>
-          <div>
-            <label htmlFor='email' className='block text-sm font-medium text-gray-700 mb-1'>
+            <div>
+              <label htmlFor='email' className='block text-sm font-medium text-gray-700 mb-1'>
                 Email Address
-            </label>
-            <input
-              id='email'
-              name='email'
-              type='email'
-              autoComplete='email'
+              </label>
+              <input
+                id='email'
+                name='email'
+                type='email'
+                autoComplete='email'
                 value={emailFormik.values.email}
                 onChange={emailFormik.handleChange}
                 onBlur={emailFormik.handleBlur}
-              className={`
+                className={`
                   appearance-none relative block w-full px-3 py-3 border rounded-lg 
                   placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 
                   focus:ring-blue-500 focus:border-transparent transition duration-150
                   ${emailFormik.errors.email && emailFormik.touched.email ? 'border-red-500' : 'border-gray-300'}
                 `}
-              placeholder='you@example.com'
-            />
-              {emailFormik.errors.email && emailFormik.touched.email && (
-              <p className='mt-1 text-sm text-red-600 flex items-center gap-1'>
-                <ErrorIcon className='text-red-500' size={20} />
+                placeholder='you@example.com'
+              />
+              {/* {emailFormik.errors.email && emailFormik.touched.email && ( */}
+              <Activity mode={emailFormik.errors.email && emailFormik.touched.email ? 'visible' : 'hidden'}>
+                <p className='mt-1 text-sm text-red-600 flex items-center gap-1'>
+                  <ErrorIcon className='text-red-500' size={20} />
                   {emailFormik.errors.email}
-              </p>
-            )}
-          </div>
+                </p>
+              </Activity>
+              {/* )} */}
+            </div>
 
             <div>
               <button
@@ -282,10 +280,12 @@ const ForgotPassword = () => {
               </Link>
             </div>
           </form>
-        )}
+        </Activity>
+        {/* )} */}
 
         {/* OTP Step */}
-        {currentStep === 'otp' && (
+        <Activity mode={currentStep === 'otp' ? 'visible' : 'hidden'}>
+          {/* {currentStep === 'otp' && ( */}
           <div className='mt-8 space-y-6'>
             <div>
               <label className='block text-sm font-medium text-gray-700 mb-3 text-center'>
@@ -327,11 +327,7 @@ const ForgotPassword = () => {
                       ? 'text-gray-400 cursor-not-allowed'
                       : 'text-blue-600 hover:text-blue-500'
                   }`}>
-                  {isResending
-                    ? 'Resending...'
-                    : resendTimer > 0
-                      ? `Resend OTP (${resendTimer}s)`
-                      : 'Resend OTP'}
+                  {isResending ? 'Resending...' : resendTimer > 0 ? `Resend OTP (${resendTimer}s)` : 'Resend OTP'}
                 </button>
               </p>
 
@@ -347,15 +343,16 @@ const ForgotPassword = () => {
               </button>
             </div>
           </div>
-        )}
+        </Activity>
 
         {/* Reset Password Step */}
-        {currentStep === 'reset' && (
+        <Activity mode={currentStep === 'reset' ? 'visible' : 'hidden'}>
+          {/* {currentStep === 'reset' && ( */}
           <form onSubmit={resetFormik.handleSubmit} className='mt-8 space-y-6'>
-          <div>
-            <label htmlFor='password' className='block text-sm font-medium text-gray-700 mb-1'>
+            <div>
+              <label htmlFor='password' className='block text-sm font-medium text-gray-700 mb-1'>
                 New Password
-            </label>
+              </label>
               <input
                 id='password'
                 name='password'
@@ -372,13 +369,13 @@ const ForgotPassword = () => {
                 `}
                 placeholder='Enter new password'
               />
-              {resetFormik.errors.password && resetFormik.touched.password && (
-              <p className='mt-1 text-sm text-red-600 flex items-center gap-1'>
-                <ErrorIcon className='text-red-500' size={20} />
+              <Activity mode={resetFormik.errors.password && resetFormik.touched.password ? 'visible' : 'hidden'}>
+                <p className='mt-1 text-sm text-red-600 flex items-center gap-1'>
+                  <ErrorIcon className='text-red-500' size={20} />
                   {resetFormik.errors.password}
-              </p>
-            )}
-          </div>
+                </p>
+              </Activity>
+            </div>
 
             <div>
               <label htmlFor='confirmPassword' className='block text-sm font-medium text-gray-700 mb-1'>
@@ -396,35 +393,38 @@ const ForgotPassword = () => {
                   appearance-none relative block w-full px-3 py-3 border rounded-lg 
                   placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 
                   focus:ring-blue-500 focus:border-transparent transition duration-150
-                  ${resetFormik.errors.confirmPassword && resetFormik.touched.confirmPassword
-                    ? 'border-red-500'
-                    : 'border-gray-300'}
+                  ${
+                    resetFormik.errors.confirmPassword && resetFormik.touched.confirmPassword
+                      ? 'border-red-500'
+                      : 'border-gray-300'
+                  }
                 `}
                 placeholder='Confirm new password'
               />
-              {resetFormik.errors.confirmPassword && resetFormik.touched.confirmPassword && (
+              <Activity
+                mode={resetFormik.errors.confirmPassword && resetFormik.touched.confirmPassword ? 'visible' : 'hidden'}>
                 <p className='mt-1 text-sm text-red-600 flex items-center gap-1'>
                   <ErrorIcon className='text-red-500' size={20} />
                   {resetFormik.errors.confirmPassword}
                 </p>
-              )}
-          </div>
+              </Activity>
+            </div>
 
-          <div>
-            <button
-              type='submit'
+            <div>
+              <button
+                type='submit'
                 disabled={resetFormik.isSubmitting}
-              className='group relative w-full flex justify-center py-3 px-4 border 
+                className='group relative w-full flex justify-center py-3 px-4 border 
               border-transparent text-sm font-medium rounded-lg text-white 
               bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 
               focus:ring-offset-2 focus:ring-blue-500 transition duration-150 
               transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 
               disabled:cursor-not-allowed'>
                 {resetFormik.isSubmitting ? 'Resetting...' : 'Reset Password'}
-            </button>
-          </div>
+              </button>
+            </div>
 
-          <div className='text-center'>
+            <div className='text-center'>
               <button
                 type='button'
                 onClick={() => {
@@ -434,9 +434,9 @@ const ForgotPassword = () => {
                 className='text-sm font-medium text-gray-600 hover:text-gray-800 transition'>
                 Back to OTP
               </button>
-          </div>
-        </form>
-        )}
+            </div>
+          </form>
+        </Activity>
       </div>
     </div>
   );

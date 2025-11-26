@@ -6,7 +6,7 @@ export const GET = async () => {
   try {
     await connect();
     const users = await User.find();
-    return new NextResponse(JSON.stringify(users), { status: 200 });
+    return new NextResponse(JSON.stringify({ status: 200, data: users }), { status: 200 });
   } catch (error: any) {
     console.error('GET error:', error);
     return new NextResponse('error' + error.message || 'Internal server error', { status: 500 });

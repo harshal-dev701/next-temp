@@ -12,7 +12,7 @@ import toast from 'react-hot-toast';
 import { HiOutlineMoon } from 'react-icons/hi';
 import { LuMonitor, LuSun } from 'react-icons/lu';
 import { userPreferences } from '@/helper/userPreferenceSingleton';
-import { logoutService } from '@/services/authServices';
+import { logoutService } from '@/services/auth.services';
 
 const getLanguageLabel = (lang: string) => {
   switch (lang) {
