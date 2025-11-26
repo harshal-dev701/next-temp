@@ -2,7 +2,6 @@ import connect from '@/lib/dbConnection';
 import User from '@/lib/modals/users';
 import { NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
-import { cookies } from 'next/headers';
 import { ACCESS_TOKEN } from '@/global/constants';
 import bcrypt from 'bcrypt';
 
@@ -24,20 +23,21 @@ export const POST = async (request: Request) => {
       return new NextResponse(JSON.stringify({ message: 'Invalid password' }), { status: 401 });
     }
     const token = jwt.sign({ userId: user._id }, process.env.NEXT_PUBLIC_JWT_SECRET!, { expiresIn: '1d' });
-    const cookieStore = await cookies();
-    cookieStore.set(ACCESS_TOKEN, token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 60 * 60 * 24, // 1 day
-      path: '/'
-    });
 
     const { password: _, __v, ...userData } = user.toObject();
     const response = new NextResponse(
       JSON.stringify({ status: 200, message: 'Login successfully', data: { ...userData, access_token: token } }),
       { status: 200 }
     );
+
+    // Set cookie in the response
+    response.cookies.set(ACCESS_TOKEN, token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 24, // 1 day
+      path: '/'
+    });
 
     return response;
   } catch (error: any) {

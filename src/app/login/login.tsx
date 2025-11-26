@@ -1,6 +1,7 @@
 'use client';
 import { useFormik } from 'formik';
 import React, { useCallback, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { LoginInputInterface } from '@/interfaces/authInterface';
 import * as Yup from 'yup';
 import Link from 'next/link';
@@ -15,6 +16,7 @@ const ErrorIcon: React.FC<{ className?: string; size?: number }> = (props) => {
 };
 
 const LoginPage = () => {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
@@ -25,9 +27,9 @@ const LoginPage = () => {
         const response = await loginService(values.email, values.password);
         if (response.status === 200) {
           toast.success(response.message || 'Login successfully');
-          // Use window.location.href for full page reload to trigger middleware
-          // This ensures the cookie is read and middleware handles the redirect
-          window.location.href = '/';
+          // Use router.push for client-side navigation without page refresh
+          // The cookie is set in the API response, so middleware will allow access
+          router.push('/');
         }
       } catch (error: any) {
         console.error('Login error:', error);
@@ -35,7 +37,7 @@ const LoginPage = () => {
         setSubmitting(false);
       }
     },
-    []
+    [router]
   );
 
   const formik = useFormik<LoginInputInterface>({
