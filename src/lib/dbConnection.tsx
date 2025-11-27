@@ -30,7 +30,10 @@
 
 import monggose from 'mongoose';
 
-const MONGODB_URI: any = "mongodb+srv://harshal_2001:XROffice2001@react-template.yyzlsye.mongodb.net/?appName=react-template";
+const MONGODB_URI: any = process.env.NEXT_PUBLIC_MONGODB_URI;
+if (!MONGODB_URI) {
+  throw new Error('NEXT_PUBLIC_MONGODB_URI is not defined');
+}
 
 const connect = async () => {
   const cinnectionStatus = monggose.connection.readyState;

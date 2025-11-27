@@ -4,6 +4,7 @@ import './globals.css';
 import { Providers } from '../components/providers/Providers';
 import ConditionalLayout from '../components/layout/ConditionalLayout';
 import Toaster from '../components/Toaster/toaster';
+import PushManager from '../components/pushNotification/PushManager';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -32,6 +33,7 @@ export default function RootLayout({
         <Providers>
           <ConditionalLayout>{children}</ConditionalLayout>
           <Toaster />
+          <PushManager />
         </Providers>
       </body>
     </html>
