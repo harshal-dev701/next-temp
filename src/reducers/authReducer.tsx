@@ -18,14 +18,30 @@ const initialState = {
 
 const authDetailsReducer = createReducerOrig(initialState, (builder) => {
   builder
+  //update upcoming values to replace initial state
+  //action.payload = set data in action
+    // --> Replaces the whole form with new data
+
     .addCase(Actions.SET_AUTH_DETAILS, (state = initialState, action: PayloadAction<any, any>) => {
       return { ...(action.payload || {}) };
     })
+    //update upcoming one by one values to replace existing state
+    //called action to update data
+    // dispatch({
+    //   type: UPDATE_AUTH_DETAILS,
+    //   payload: { propsName: "email", value: "new@mail.com" }
+    // })
+    // ➡️ Only email gets updated.
+    // --> Updates only one field — dynamic update
     .addCase(Actions.UPDATE_AUTH_DETAILS, (state, action: PayloadAction<any, any>) => {
       const info: any = { ...state };
       info[action.payload.propsName] = action.payload.value;
       return { ...info };
     })
+    //Reset state to default
+    // Why JSON.parse(JSON.stringify())?
+    // to avoid returning the same object reference
+    // --> Clear the form back to default empty values
     .addCase(Actions.CLEAR_AUTH_DETAILS, () => {
       const initialInfoState = JSON.parse(JSON.stringify(initialState));
       return initialInfoState;

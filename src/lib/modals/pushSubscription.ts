@@ -1,4 +1,4 @@
-import { Schema, model, models, Model, Document } from 'mongoose';
+import mongoose, { Schema, model, models, Model, Document } from 'mongoose';
 
 export interface IPushSubscription extends Document {
   userId: string;
@@ -10,9 +10,9 @@ export interface IPushSubscription extends Document {
 const pushSubscriptionSchema = new Schema(
   {
     userId: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
       required: true,
-      unique: true
+      ref: 'User'
     },
     subscription: {
       type: Schema.Types.Mixed,
